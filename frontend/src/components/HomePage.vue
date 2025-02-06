@@ -27,6 +27,11 @@
             <p>{{ post.content }}</p>
           </div>
         </div>
+        <div class="pagination">
+          <button @click="fetchPosts(page - 1)" :disabled="page === 1">قبلی</button>
+          <span>صفحه {{ page }} از {{ totalPages }}</span>
+          <button @click="fetchPosts(page + 1)" :disabled="page === totalPages">بعدی</button>
+        </div>
       </section>
     </main>
     <footer>
@@ -42,17 +47,21 @@ export default {
   name: 'HomePage',
   data() {
     return {
-      posts: []
+      posts: [],
+      page: 1,
+      totalPages: 1
     };
   },
   created() {
-    this.fetchPosts();
+    this.fetchPosts(this.page);
   },
   methods: {
-    async fetchPosts() {
+    async fetchPosts(page) {
       try {
-        const response = await apiService.getPosts();
+        const response = await apiService.getPosts(page);
         this.posts = response.data.results;
+        this.page = page;
+        this.totalPages = Math.ceil(response.data.count / 10); // Ensure totalPages is an integer
       } catch (error) {
         console.error('Failed to fetch posts:', error);
       }
@@ -147,6 +156,23 @@ main {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pagination {
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #004d40;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.pagination span {
+  font-size: 16px;
 }
 
 footer {

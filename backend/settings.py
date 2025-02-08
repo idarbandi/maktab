@@ -168,7 +168,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 # Use console email backend
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# settings.py
 CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8080',  # Add your frontend URL here
-    'http://localhost:8080',
+    "http://localhost:8080",  # Add your Vue development server origin
+    "http://127.0.0.1:8080",
 ]

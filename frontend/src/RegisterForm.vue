@@ -2,7 +2,7 @@
   <div class="auth-container">
     <div class="auth-card">
       <h2>ثبت نام</h2>
-      <form @submit.prevent="register">
+      <form @submit.prevent="submitRegistration">  <!-- Changed method name -->
         <div class="input-group">
           <input type="text" v-model="username" placeholder="نام کاربری" required />
         </div>
@@ -22,8 +22,9 @@
   </div>
 </template>
 
+<!-- Correct RegisterForm.vue methods section -->
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'RegisterForm',
@@ -37,23 +38,26 @@ export default {
       errorMessage: ''
     };
   },
-  computed: {
-    ...mapGetters(['authStatus'])
-  },
   methods: {
     ...mapActions(['register']),
-    async register() {
+    async submitRegistration() {  // Changed method name
       if (this.password1 !== this.password2) {
         this.error = true;
-        this.errorMessage = 'رمز عبور و تایید رمز عبور باید یکسان باشند.';
+        this.errorMessage = 'Passwords do not match';
         return;
       }
       try {
-        await this.register({ username: this.username, email: this.email, password1: this.password1, password2: this.password2 });
+        await this.register({
+          username: this.username,
+          email: this.email,
+          password1: this.password1,
+          password2: this.password2
+        });
         this.$router.push('/');
       } catch (error) {
         this.error = true;
-        this.errorMessage = 'خطایی رخ داده است. لطفاً دوباره تلاش کنید.';
+        this.errorMessage = 'Registration failed. Please try again.';
+        console.error('Registration error:', error);
       }
     }
   }

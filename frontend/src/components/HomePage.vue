@@ -12,6 +12,13 @@
           <li><router-link to="/contact">تماس با ما</router-link></li>
         </ul>
       </nav>
+      <div class="auth-buttons">
+        <span v-if="isAuthenticated">
+          خوش آمدید, {{ user.username }}!
+          <button @click="logout" class="logout-button">خروج</button>
+        </span>
+        <router-link v-else to="/login" class="login-button">ورود</router-link>
+      </div>
     </header>
     <main>
       <section class="hero">
@@ -41,6 +48,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import apiService from '@/apiService';
 
 export default {
@@ -52,11 +60,15 @@ export default {
       totalPages: 1
     };
   },
+  computed: {
+    ...mapGetters(['isAuthenticated', 'user'])
+  },
   created() {
     this.fetchPosts(this.page);
     console.log('Component created, fetching posts...'); // Debugging log
   },
   methods: {
+    ...mapActions(['logout']),
     async fetchPosts(page) {
       try {
         const response = await apiService.getPosts(page);
@@ -67,6 +79,11 @@ export default {
       } catch (error) {
         console.error('Failed to fetch posts:', error); // Debugging log
       }
+    },
+    logout() {
+      console.log('Logging out'); // Debugging log
+      this.logout(); // Dispatch the logout action from Vuex
+      this.$router.push('/login'); // Redirect to the login page
     }
   }
 };
@@ -76,6 +93,7 @@ export default {
 #home-page {
   font-family: 'Iran Sans', Tahoma, sans-serif;
   direction: rtl;
+  background-color: #f9f9f9;
 }
 
 header {
@@ -101,6 +119,16 @@ nav ul li a {
   color: white;
   text-decoration: none;
   font-size: 16px;
+  transition: color 0.3s;
+}
+
+nav ul li a:hover {
+  color: #b2dfdb;
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: center;
 }
 
 main {
@@ -110,17 +138,19 @@ main {
 .hero {
   text-align: center;
   background-color: #e0f7fa;
-  padding: 40px 20px;
+  padding: 60px 20px;
   margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 .hero h1 {
-  font-size: 36px;
+  font-size: 40px;
   margin-bottom: 10px;
 }
 
 .hero p {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 20px;
 }
 
@@ -128,14 +158,16 @@ main {
   background-color: #004d40;
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 12px 25px;
+  font-size: 18px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .hero .cta-button:hover {
   background-color: #00796b;
+  transform: translateY(-2px);
 }
 
 .posts {
@@ -143,7 +175,7 @@ main {
 }
 
 .posts h2 {
-  font-size: 24px;
+  font-size: 28px;
   margin-bottom: 20px;
 }
 
@@ -154,10 +186,16 @@ main {
 }
 
 .post-card {
-  background-color: #f1f1f1;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .pagination {
@@ -171,6 +209,11 @@ main {
   padding: 10px 15px;
   margin: 0 5px;
   cursor: pointer;
+  border-radius: 5px;
+}
+
+.pagination button:hover {
+  background-color: #00796b;
 }
 
 .pagination span {

@@ -1,6 +1,6 @@
 // store/index.js
 import { createStore } from 'vuex';
-import axios from 'axios';
+import apiService, { apiClient } from '@/apiService'; // Import apiService and apiClient
 
 const store = createStore({
   state: {
@@ -15,7 +15,7 @@ const store = createStore({
     auth_success(state, payload) {
       state.status = 'success';
       state.token = payload.token;
-      state.user = payload.user;
+      state.user = payload.user || {}; // Default to an empty object if user is undefined
     },
     auth_error(state) {
       state.status = 'error';
@@ -31,13 +31,18 @@ const store = createStore({
       commit('auth_request');
       console.log('Login action called with user:', user); // Debugging log
       try {
-        const response = await axios.post('http://127.0.0.1:8000/dj-rest-auth/login/', user); // Updated URL
+        const response = await apiService.post('/dj-rest-auth/login/', user);
         console.log('Login response:', response); // Debugging log
-        const token = response.data.key;
-        const userData = response.data.user;
+
+        // Ensure response.data contains the expected properties
+        const token = response.data.key; // Check if `response.data.key` exists
+        if (!token) {
+          throw new Error('Invalid response format'); // Throw error if properties are missing
+        }
+
         localStorage.setItem('token', token);
-        axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-        commit('auth_success', { token, user: userData });
+        apiClient.defaults.headers.common['Authorization'] = `Token ${token}`; // Set token on apiClient
+        commit('auth_success', { token, user: {} }); // Pass an empty object for user
       } catch (error) {
         commit('auth_error');
         localStorage.removeItem('token');
@@ -49,13 +54,18 @@ const store = createStore({
       commit('auth_request');
       console.log('Register action called with user:', user); // Debugging log
       try {
-        const response = await axios.post('http://127.0.0.1:8000/dj-rest-auth/registration/', user); // Updated URL
+        const response = await apiService.post('/dj-rest-auth/registration/', user);
         console.log('Registration response:', response); // Debugging log
-        const token = response.data.key;
-        const userData = response.data.user;
+
+        // Ensure response.data contains the expected properties
+        const token = response.data.key; // Check if `response.data.key` exists
+        if (!token) {
+          throw new Error('Invalid response format'); // Throw error if properties are missing
+        }
+
         localStorage.setItem('token', token);
-        axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-        commit('auth_success', { token, user: userData });
+        apiClient.defaults.headers.common['Authorization'] = `Token ${token}`; // Set token on apiClient
+        commit('auth_success', { token, user: {} }); // Pass an empty object for user
       } catch (error) {
         commit('auth_error');
         localStorage.removeItem('token');
@@ -66,7 +76,7 @@ const store = createStore({
     logout({ commit }) {
       commit('logout');
       localStorage.removeItem('token');
-      delete axios.defaults.headers.common['Authorization'];
+      delete apiClient.defaults.headers.common['Authorization']; // Delete token from apiClient
     },
   },
   getters: {

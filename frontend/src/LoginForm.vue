@@ -2,7 +2,7 @@
   <div class="auth-container">
     <div class="auth-card">
       <h2>ورود</h2>
-      <form @submit.prevent="login">
+      <form @submit.prevent="handleLogin">
         <div class="input-group">
           <input type="text" v-model="username" placeholder="نام کاربری" required />
         </div>
@@ -34,13 +34,15 @@ export default {
   },
   methods: {
     ...mapActions(['login']),
-    async login() {
+    async handleLogin() {  // Renamed to avoid conflict
+      console.log('Login form submitted'); // Debugging log
       try {
         await this.login({ username: this.username, password: this.password });
         this.$router.push('/');
       } catch (error) {
         this.error = true;
         this.errorMessage = 'نام کاربری یا رمز عبور اشتباه است.';
+        console.error('Login form error:', error); // Debugging log
       }
     }
   }

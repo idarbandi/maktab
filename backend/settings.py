@@ -37,8 +37,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # CORS HEADERS
-    'corsheaders',
     # INTERNAL APPS
     "app",
     # REST & THIRD PARTIES
@@ -47,8 +45,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'dj_rest_auth',  # Django Rest Auth
-    'dj_rest_auth.registration',  # Django Rest Auth registration
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'corsheaders',  # CORS support
 ]
 
 MIDDLEWARE = [
@@ -63,13 +62,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # For development purposes only
+# Authentication backends
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-    "http://127.0.0.1:8080",
-    # Add other origins as needed
-]
+CORS_ALLOW_ALL_ORIGINS = True  # For development purposes only
 
 
 ROOT_URLCONF = "backend.urls"
@@ -145,12 +144,6 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Authentication backends
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
-
 # Site ID
 SITE_ID = 1
 
@@ -168,7 +161,14 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10,  # Customize the pagination size as needed
 }
 
-# Allauth settings
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_AUTHENTICATION_METHOD = 'username'  # Explicitly defining this attribute
 ACCOUNT_EMAIL_REQUIRED = True
+
+# Use console email backend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8080',  # Add your frontend URL here
+    'http://localhost:8080',
+]

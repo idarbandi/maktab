@@ -54,6 +54,7 @@ export default {
   },
   created() {
     this.fetchPosts(this.page);
+    console.log('Component created, fetching posts...'); // Debugging log
   },
   methods: {
     async fetchPosts(page) {
@@ -61,9 +62,10 @@ export default {
         const response = await apiService.getPosts(page);
         this.posts = response.data.results;
         this.page = page;
-        this.totalPages = Math.ceil(response.data.count / 10); // Ensure totalPages is an integer
+        this.totalPages = Math.ceil(response.data.count / 10);
+        console.log('Posts fetched:', this.posts); // Debugging log
       } catch (error) {
-        console.error('Failed to fetch posts:', error);
+        console.error('Failed to fetch posts:', error); // Debugging log
       }
     }
   }

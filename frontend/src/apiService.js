@@ -27,14 +27,18 @@ apiClient.interceptors.request.use(
 
 const apiService = {
   post(url, data) {
-    // Define the post method
     return apiClient.post(url, data);
+  },
+  get(url) {
+    return apiClient.get(url);
   },
   getPosts(page = 1) {
     console.log('Fetching posts for page:', page); // Add debugging log
     return apiClient.get(`/api/posts/?page=${page}`);
   },
-  // Add any other API methods here
+  getUser() {
+    return apiClient.get('/dj-rest-auth/user/'); // Endpoint to fetch user information
+  },
 };
 
 export { apiClient };

@@ -2,7 +2,7 @@
   <div class="auth-container">
     <div class="auth-card">
       <h2>ثبت نام</h2>
-      <form @submit.prevent="submitRegistration">  <!-- Changed method name -->
+      <form @submit.prevent="handleRegister">
         <div class="input-group">
           <input type="text" v-model="username" placeholder="نام کاربری" required />
         </div>
@@ -17,12 +17,12 @@
         </div>
         <button type="submit" class="auth-button">ثبت نام</button>
         <p v-if="error" class="error-message">{{ errorMessage }}</p>
+        <p v-if="confirmationMessage" class="confirmation-message">{{ confirmationMessage }}</p>
       </form>
     </div>
   </div>
 </template>
 
-<!-- Correct RegisterForm.vue methods section -->
 <script>
 import { mapActions } from 'vuex';
 
@@ -35,17 +35,14 @@ export default {
       password1: '',
       password2: '',
       error: false,
-      errorMessage: ''
+      errorMessage: '',
+      confirmationMessage: ''
     };
   },
   methods: {
     ...mapActions(['register']),
-    async submitRegistration() {  // Changed method name
-      if (this.password1 !== this.password2) {
-        this.error = true;
-        this.errorMessage = 'Passwords do not match';
-        return;
-      }
+    async handleRegister() {  // Renamed to avoid conflict
+      console.log('Register form submitted'); // Debugging log
       try {
         await this.register({
           username: this.username,
@@ -53,11 +50,15 @@ export default {
           password1: this.password1,
           password2: this.password2
         });
-        this.$router.push('/');
+        if (!this.$store.state.token) {
+          this.confirmationMessage = 'لطفاً ایمیل خود را برای تأیید حساب بررسی کنید.';
+        } else {
+          this.$router.push('/');
+        }
       } catch (error) {
         this.error = true;
-        this.errorMessage = 'Registration failed. Please try again.';
-        console.error('Registration error:', error);
+        this.errorMessage = 'خطایی در ثبت نام رخ داده است.';
+        console.error('Register form error:', error); // Debugging log
       }
     }
   }
@@ -70,21 +71,21 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #f9f9f9;
 }
 
 .auth-card {
-  background: white;
+  background-color: white;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
 }
 
 .auth-card h2 {
   margin-bottom: 20px;
-  color: #004d40;
+  text-align: center;
 }
 
 .input-group {
@@ -94,18 +95,18 @@ export default {
 .input-group input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 5px;
 }
 
 .auth-button {
-  width: 100%;
-  padding: 10px;
   background-color: #004d40;
   color: white;
   border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
+  width: 100%;
   cursor: pointer;
+  border-radius: 5px;
   transition: background-color 0.3s;
 }
 
@@ -114,7 +115,12 @@ export default {
 }
 
 .error-message {
-  margin-top: 10px;
   color: red;
+  text-align: center;
+}
+
+.confirmation-message {
+  color: green;
+  text-align: center;
 }
 </style>

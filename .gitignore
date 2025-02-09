@@ -23,6 +23,7 @@ wheels/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
+SELENIUM ARTICLE.md
 *.egg
 MANIFEST
 

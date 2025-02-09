@@ -165,6 +165,17 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_AUTHENTICATION_METHOD = 'username'  # Explicitly defining this attribute
 ACCOUNT_EMAIL_REQUIRED = True
 
+# settings.py
+
+# URL to redirect to after email confirmation for authenticated users
+# Replace with your frontend login URL
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'http://127.0.0.1:8080/login'
+
+# URL to redirect to after email confirmation for anonymous users
+# Replace with your frontend login URL
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'http://127.0.0.1:8080/register'
+
+
 # Use console email backend
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

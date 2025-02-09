@@ -5,7 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import UserProfile
-from .serializers import UserProfileSerializer, UserSerializer
+from .serializers import (
+    NotificationSerializer,
+    PostSerializer,
+    UserProfileSerializer,
+    UserSerializer,
+)
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -37,3 +42,22 @@ class UserDetailView(APIView):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+
+class UserDashboardView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        user_data = UserSerializer(user).data
+        # Assuming user has a related name 'posts'
+        recent_posts = user.posts.order_by('-created_at')[:5]
+        # Assuming user has a related name 'notifications'
+        notifications = user.notifications.order_by('-created_at')[:5]
+
+        data = {
+            'user': user_data,
+            'recent_posts': PostSerializer(recent_posts, many=True).data,
+            'notifications': NotificationSerializer(notifications, many=True).data
+        }
+        return Response(data)

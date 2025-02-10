@@ -5,6 +5,7 @@ import LoginForm from '@/LoginForm.vue';
 import RegisterForm from '@/RegisterForm.vue';
 import dashboardPage from '@/components/dashboardPage.vue';
 import store from '@/store'; // Import the store
+import PasswordResetForm from '../components/PasswordReset.vue';
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: RegisterForm,
+  },
+  {
+    path: '/password-reset',
+    name: 'PasswordReset',
+    component: PasswordResetForm,
   },
   {
     path: '/about',
@@ -60,7 +66,7 @@ const router = createRouter({
 
 // Navigation guard to protect routes
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/login', '/register'];
+  const publicPages = ['/login', '/register', '/password-reset'];
   const authRequired = !publicPages.includes(to.path);
   const isLoggedIn = store.getters.isAuthenticated;
 

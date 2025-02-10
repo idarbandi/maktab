@@ -11,9 +11,14 @@
         </div>
         <button type="submit" class="auth-button">ورود</button>
         <p v-if="error" class="error-message">{{ errorMessage }}</p>
-        <div class="social-login">
-          <p>یا:</p>
-          <a :href="googleLoginUrl" class="social-button">ورود با گوگل</a>
+        <div class="additional-options">
+          <div class="social-login">
+            <p>یا:</p>
+            <a :href="googleLoginUrl" class="social-button">ورود با گوگل</a>
+          </div>
+          <div class="password-reset">
+            <a @click="goToPasswordReset" class="reset-link">فراموشی رمز عبور؟</a>
+          </div>
         </div>
       </form>
     </div>
@@ -44,11 +49,13 @@ export default {
         this.error = true;
         this.errorMessage = 'خطایی در ورود رخ داده است.';
       }
+    },
+    goToPasswordReset() {
+      this.$router.push('/password-reset');
     }
   }
 };
 </script>
-
 
 <style scoped>
 .auth-container {
@@ -103,9 +110,13 @@ export default {
   text-align: center;
 }
 
-.social-login {
+.additional-options {
   margin-top: 20px;
   text-align: center;
+}
+
+.social-login {
+  margin-bottom: 10px;
 }
 
 .social-button {
@@ -120,5 +131,19 @@ export default {
 
 .social-button:hover {
   background-color: #c33c2f;
+}
+
+.password-reset {
+  margin-top: 10px;
+}
+
+.reset-link {
+  color: #00796b;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.reset-link:hover {
+  color: #004d40;
 }
 </style>

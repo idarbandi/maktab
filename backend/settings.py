@@ -181,6 +181,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'OAUTH_PKCE_ENABLED': True,
+        'REDIRECT_URI': 'http://127.0.0.1:8000/accounts/google/login/callback/'
     }
 }
 
@@ -197,6 +198,14 @@ ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'http://127.0.0.1:8080/regis
 
 # Use console email backend
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Uncomment the following lines for production setup
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'your_email@example.com'
+# EMAIL_HOST_PASSWORD = 'your_email_password'
+
 
 # settings.py
 CORS_ALLOWED_ORIGINS = [

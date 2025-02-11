@@ -5,7 +5,7 @@ import LoginForm from '@/LoginForm.vue';
 import RegisterForm from '@/RegisterForm.vue';
 import dashboardPage from '@/components/dashboardPage.vue';
 import store from '@/store'; // Import the store
-import PasswordResetForm from '../components/PasswordReset.vue';
+import PasswordReset from '@/components/PasswordReset.vue';
 
 const routes = [
   {
@@ -33,7 +33,7 @@ const routes = [
   {
     path: '/password-reset',
     name: 'PasswordReset',
-    component: PasswordResetForm,
+    component: PasswordReset,
   },
   {
     path: '/about',
@@ -52,11 +52,6 @@ const routes = [
       }
     },
   },
-  // {
-  //   path: '/contact',
-  //   name: 'Contact',
-  //   component: () => import('@/components/Contact.vue'), // Lazy-loaded route
-  // },
 ];
 
 const router = createRouter({

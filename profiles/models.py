@@ -44,7 +44,7 @@ class Notification(models.Model):
     is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.message.message[:50]
+        return self.message[:50]
 
 
 # profiles/models.py

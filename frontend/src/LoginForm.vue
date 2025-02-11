@@ -2,7 +2,7 @@
   <div class="auth-container">
     <div class="auth-card">
       <h2>ورود</h2>
-      <form @submit.prevent="login">
+      <form @submit.prevent="handleLogin">
         <div class="input-group">
           <input type="email" v-model="email" placeholder="ایمیل" required />
         </div>
@@ -36,12 +36,12 @@ export default {
       password: '',
       error: false,
       errorMessage: '',
-      googleLoginUrl: 'http://127.0.0.1:8000/accounts/google/login/'
+      googleLoginUrl: 'http://127.0.0.1:8000/accounts/google/login/',
     };
   },
   methods: {
     ...mapActions(['login']),
-    async login() {
+    async handleLogin() {
       try {
         await this.login({ email: this.email, password: this.password });
         this.$router.push('/');
@@ -52,8 +52,8 @@ export default {
     },
     goToPasswordReset() {
       this.$router.push('/password-reset');
-    }
-  }
+    },
+  },
 };
 </script>
 

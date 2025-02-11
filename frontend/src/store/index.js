@@ -1,30 +1,14 @@
+// store/index.js
 import { createStore } from 'vuex';
 import apiService, { apiClient } from '@/apiService';
-import axios from 'axios';
 
-// Notifications module
-const notificationsModule = {
-  state: {
-    notifications: [],
-  },
-  getters: {
-    allNotifications: (state) => state.notifications,
-  },
-  actions: {
-    async fetchNotifications({ commit }) {
-      const response = await axios.get('http://127.0.0.1:8000/profile/notifications/');
-      commit('setNotifications', response.data);
-    },
-  },
-  mutations: {
-    setNotifications: (state, notifications) => (state.notifications = notifications),
-  },
-};
+const user = localStorage.getItem('user');
+const parsedUser = user ? JSON.parse(user) : {};
 
 const store = createStore({
   state: {
     token: localStorage.getItem('token') || '',
-    user: JSON.parse(localStorage.getItem('user')) || {},
+    user: parsedUser,
     status: '',
   },
   mutations: {
@@ -48,20 +32,20 @@ const store = createStore({
   actions: {
     async login({ commit }, user) {
       commit('auth_request');
-      console.log('Login action called with user:', user);
       try {
-        const response = await apiService.post('/dj-rest-auth/login/', user);
-        console.log('Login response:', response);
+        const response = await apiService.post('/dj-rest-auth/login/', {
+          email: user.email,
+          password: user.password,
+        });
 
         const token = response.data.key;
-        if (!token) {
-          throw new Error('Invalid response format');
-        }
+        const userInfo = response.data.user; // Update with correct user data path
 
         localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user)); // Store user info
+        localStorage.setItem('user', JSON.stringify(userInfo));
         apiClient.defaults.headers.common['Authorization'] = `Token ${token}`;
-        commit('auth_success', { token, user });
+
+        commit('auth_success', { token, user: userInfo });
       } catch (error) {
         commit('auth_error');
         localStorage.removeItem('token');
@@ -69,35 +53,10 @@ const store = createStore({
         throw error;
       }
     },
-    async register({ commit }, user) {
-      commit('auth_request');
-      console.log('Register action called with user:', user);
-      try {
-        const response = await apiService.post('/dj-rest-auth/registration/', user);
-        console.log('Registration response:', response);
-
-        if (response.data.key) {
-          const token = response.data.key;
-          localStorage.setItem('token', token);
-          localStorage.setItem('user', JSON.stringify(user)); // Store user info
-          apiClient.defaults.headers.common['Authorization'] = `Token ${token}`;
-          commit('auth_success', { token, user });
-        } else {
-          // Assume email confirmation is required
-          console.log('Email confirmation required');
-          commit('auth_success', { token: null, user });
-        }
-      } catch (error) {
-        commit('auth_error');
-        localStorage.removeItem('token');
-        console.error('Registration error:', error);
-        throw error;
-      }
-    },
     logout({ commit }) {
       commit('logout');
       localStorage.removeItem('token');
-      localStorage.removeItem('user'); // Remove user info
+      localStorage.removeItem('user');
       delete apiClient.defaults.headers.common['Authorization'];
     },
   },
@@ -105,9 +64,6 @@ const store = createStore({
     isAuthenticated: (state) => !!state.token,
     authStatus: (state) => state.status,
     user: (state) => state.user,
-  },
-  modules: {
-    notifications: notificationsModule,
   },
 });
 

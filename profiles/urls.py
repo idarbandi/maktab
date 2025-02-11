@@ -3,6 +3,8 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    CommentViewSet,
+    NotificationViewSet,
     UserDashboardView,
     UserDetailView,
     UserProfileUpdateView,
@@ -11,6 +13,8 @@ from .views import (
 
 router = DefaultRouter()
 router.register(r'profiles', UserProfileViewSet, basename='profile')
+router.register(r'notifications', NotificationViewSet, basename='notification')
+router.register(r'comments', CommentViewSet, basename='comment')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -1,6 +1,25 @@
-// store/index.js
 import { createStore } from 'vuex';
 import apiService, { apiClient } from '@/apiService';
+import axios from 'axios';
+
+// Notifications module
+const notificationsModule = {
+  state: {
+    notifications: [],
+  },
+  getters: {
+    allNotifications: (state) => state.notifications,
+  },
+  actions: {
+    async fetchNotifications({ commit }) {
+      const response = await axios.get('http://127.0.0.1:8000/profile/notifications/');
+      commit('setNotifications', response.data);
+    },
+  },
+  mutations: {
+    setNotifications: (state, notifications) => (state.notifications = notifications),
+  },
+};
 
 const store = createStore({
   state: {
@@ -86,6 +105,9 @@ const store = createStore({
     isAuthenticated: (state) => !!state.token,
     authStatus: (state) => state.status,
     user: (state) => state.user,
+  },
+  modules: {
+    notifications: notificationsModule,
   },
 });
 

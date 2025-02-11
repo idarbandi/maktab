@@ -1,15 +1,24 @@
 # profiles/serializers.py
-from .models import UserProfile
 from django.contrib.auth.models import User
+
+# profiles/comments
 from rest_framework import serializers
 
-from .models import Notification, Post
+from .models import Comment, Notification, Post, UserProfile
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
+    replies = serializers.SerializerMethodField()
+    like_count = serializers.ReadOnlyField()
+
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email']
+        model = Comment
+        fields = '__all__'
+
+    def get_replies(self, obj):
+        if obj.replies.exists():
+            return CommentSerializer(obj.replies.all(), many=True).data
+        return []
 
 
 class PostSerializer(serializers.ModelSerializer):

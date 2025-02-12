@@ -1,5 +1,7 @@
 <template>
   <div class="home-container">
+    <SearchBar />
+    <FilterSort />
     <h2>لیست مطالب</h2>
     <ul>
       <li v-for="post in posts" :key="post.id">
@@ -21,9 +23,15 @@
 <script>
 import { mapGetters } from 'vuex';
 import apiService from '@/apiService';
+import SearchBar from '@/components/SearchBar.vue';
+import FilterSort from '@/components/FilterSort.vue';
 
 export default {
   name: 'HomePage',
+  components: {
+    SearchBar,
+    FilterSort,
+  },
   data() {
     return {
       posts: [],
@@ -36,7 +44,6 @@ export default {
     try {
       const response = await apiService.get('/profile/dashboard/');
       this.posts = response.data.recent_posts;
-      console.log('respo',response)
     } catch (error) {
       console.error('Failed to fetch posts:', error);
     }

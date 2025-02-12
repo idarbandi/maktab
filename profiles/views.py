@@ -1,14 +1,14 @@
 # profiles/views.py
-from django.contrib.auth.models import User
+from django.db.models import Count, Q
 
 # profiles/views.py
-from rest_framework import permissions, viewsets
+from rest_framework import generics, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Comment, Notification, UserProfile
+from .models import Comment, Notification, Post, User, UserProfile
 from .serializers import (
     CommentSerializer,
     NotificationSerializer,
@@ -16,6 +16,23 @@ from .serializers import (
     UserProfileSerializer,
     UserSerializer,
 )
+
+
+class SearchView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', '')
+        posts = Post.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query))
+        users = User.objects.filter(
+            Q(username__icontains=query) | Q(email__icontains=query))
+        return {'posts': PostSerializer(posts, many=True)
+                .data, 'users': UserSerializer(users, many=True).data}
+
+    def list(self, request, *args, **kwargs):
+        response = self.get_queryset()
+        return Response(response)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -71,6 +88,33 @@ class UserDetailView(APIView):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+
+# profiles/filters & sort
+
+
+class FilterSortPostView(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        category = self.request.query_params.get('category')
+        tag = self.request.query_params.get('tag')
+        sort_by = self.request.query_params.get('sort_by')
+
+        if category:
+            queryset = queryset.filter(categories__name=category)
+        if tag:
+            queryset = queryset.filter(tags__name=tag)
+        if sort_by == 'popularity':
+            queryset = queryset.annotate(
+                like_count=Count('likes')).order_by('-like_count')
+        elif sort_by == 'date':
+            queryset = queryset.order_by('-created_at')
+
+        return queryset
 
 
 class UserDashboardView(APIView):

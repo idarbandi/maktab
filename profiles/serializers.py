@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # profiles/comments
 from rest_framework import serializers
 
-from .models import Comment, Notification, Post, UserProfile
+from .models import Category, Comment, Notification, Post, Tag, UserProfile
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -21,10 +21,22 @@ class CommentSerializer(serializers.ModelSerializer):
         return []
 
 
-class PostSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Post
-        fields = ['id', 'title', 'content', 'created_at']
+        model = Category
+        fields = '__all__'
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
+
+
+class PostSerializer(serializers.ModelSerializer):
+    categories = CategorySerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+    like_count = serializers.ReadOnlyField()
 
 
 class NotificationSerializer(serializers.ModelSerializer):

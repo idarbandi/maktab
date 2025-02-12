@@ -1,23 +1,49 @@
 # profiles/admin.py
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
 
-from .models import Comment, Notification, Post, UserProfile
+from .models import Category, Comment, Notification, Post, Tag, UserProfile
 
 
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'location')
-    search_fields = ('user__username', 'location')
-    list_filter = ('location',)
-    ordering = ('user',)
+# Custom UserAdmin to manage UserProfile
+class UserProfileInline(admin.StackedInline):
+    model: UserProfile
+    can_delete: False
+
+
+class UserAdmin(BaseUserAdmin):
+    inlines = (UserProfileInline,)
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        if obj:
+            fieldsets = list(fieldsets)
+            fieldsets.append(
+                ('UserProfile', {'fields': ('bio', 'location', 'profile_picture')}))
+        return fieldsets
+
+
+# Register User model with custom UserAdmin
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
 
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'created_at')
+    list_display = ('title', 'user', 'created_at', 'status')
     search_fields = ('title', 'user__username', 'content')
-    list_filter = ('created_at',)
+    list_filter = ('created_at', 'status')
     ordering = ('-created_at',)
+    actions = ['approve_posts', 'reject_posts']
+
+    def approve_posts(self, request, queryset):
+        queryset.update(status='approved')
+    approve_posts.short_description = 'Approve selected posts'
+
+    def reject_posts(self, request, queryset):
+        queryset.update(status='rejected')
+    reject_posts.short_description = 'Reject selected posts'
 
 
 @admin.register(Comment)
@@ -47,3 +73,15 @@ class NotificationAdmin(admin.ModelAdmin):
     def message_excerpt(self, obj):
         return obj.message[:50] + ('...' if len(obj.message) > 50 else '')
     message_excerpt.short_description = 'Message Excerpt'
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)

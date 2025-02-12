@@ -30,6 +30,13 @@ class Tag(models.Model):
 
 
 class Post(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+    # Added a status field to the Post model to facilitate approving or rejecting posts.
+
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='posts')
     title = models.CharField(max_length=255)
@@ -38,13 +45,15 @@ class Post(models.Model):
     categories = models.ManyToManyField(Category, related_name='posts')
     tags = models.ManyToManyField(Tag, related_name='posts')
     likes = models.ManyToManyField(User, related_name='post_likes', blank=True)
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return self.title
 
     @property
     def like_count(self):
-        return
+        return self.likes.count()
 
 
 class Notification(models.Model):

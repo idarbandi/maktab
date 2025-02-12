@@ -81,8 +81,11 @@ class UserProfileUpdateView(APIView):
         return Response(serializer.errors, status=400)
 
 
+# Check USers Authority
+
+
 class UserDetailView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -145,3 +148,17 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Notification.objects.filter(user=user)
+
+
+# profiles/views.py
+
+
+class IDAdminView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser or request.user.is_staff:
+            # Admin-specific logic here
+            return Response({"message": "You are an admin"})
+        else:
+            return Response({"message": "You are not an admin"}, status=403)

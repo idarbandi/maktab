@@ -39,7 +39,7 @@ const store = createStore({
         });
 
         const token = response.data.key;
-        const userInfo = response.data.user; // Update with correct user data path
+        const userInfo = response.data.user; // Ensure this includes is_superuser or is_staff
 
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(userInfo));

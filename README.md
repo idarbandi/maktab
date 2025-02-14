@@ -44,6 +44,8 @@
 
 ---
 
+<img src="https://github.com/idarbandi/maktab/blob/main/frontend/public/Screenshot%20from%202025-02-13%2019-16-12.png"/>
+
 ## 🛠 تکنولوژی‌های استفاده شده  
 - **فرانت اند**: Vue.js + Vuex + Vuetify + Axios  
 - **بک اند**: Django + Django REST Framework + PostgreSQL  

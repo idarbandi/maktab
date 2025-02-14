@@ -1,3 +1,4 @@
+<!-- RegisterForm.vue -->
 <template>
   <div class="auth-container">
     <div class="auth-card">
@@ -36,11 +37,11 @@ export default {
       password2: '',
       error: false,
       errorMessage: '',
-      confirmationMessage: ''
+      confirmationMessage: '',
     };
   },
   methods: {
-    ...mapActions(['register']),
+    ...mapActions(['register']),  // Map the register action
     async handleRegister() {  // Renamed to avoid conflict
       console.log('Register form submitted'); // Debugging log
       try {
@@ -48,7 +49,7 @@ export default {
           username: this.username,
           email: this.email,
           password1: this.password1,
-          password2: this.password2
+          password2: this.password2,
         });
         if (!this.$store.state.token) {
           this.confirmationMessage = 'لطفاً ایمیل خود را برای تأیید حساب بررسی کنید.';
@@ -60,8 +61,8 @@ export default {
         this.errorMessage = 'خطایی در ثبت نام رخ داده است.';
         console.error('Register form error:', error); // Debugging log
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -1,6 +1,13 @@
+<!--
+This file is part of the maktab project.
+All rights reserved to idarbandi.
+For more details, contact: darbandidr99@gmail.com
+GitHub repository: https://github.com/idarbandi/maktab
+-->
+
 <template>
-  <div class="notifications">
-    <div v-for="notification in allNotifications" :key="notification.id" class="notification">
+  <div class="maktab-notifications">
+    <div v-for="notification in allMaktabNotifications" :key="notification.id" class="notification">
       <p>{{ notification.message }}</p>
       <small>{{ notification.created_at }}</small>
     </div>
@@ -11,22 +18,24 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'NotificationList',
+  name: 'MaktabNotificationList',
   computed: {
-    ...mapGetters(['allNotifications']),
+    ...mapGetters(['allMaktabNotifications']),
   },
   methods: {
-    ...mapActions(['fetchNotifications']),
+    ...mapActions(['fetchMaktabNotifications']),
   },
   created() {
-    this.fetchNotifications();
+    // فراخوانی دریافت اطلاعیه‌ها هنگام ساخت کامپوننت
+    this.fetchMaktabNotifications();
   },
 };
 </script>
 
 <style scoped>
-.notifications {
+.maktab-notifications {
   padding: 20px;
+  /* استایل‌دهی به بخش اطلاعیه‌ها */
 }
 .notification {
   background: #f9f9f9;
@@ -34,5 +43,6 @@ export default {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
+  /* استایل‌دهی به هر اطلاعیه */
 }
 </style>

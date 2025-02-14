@@ -1,62 +1,101 @@
-# profiles/serializers.py
-from django.contrib.auth.models import User
+"""
+This file is part of the maktab project.
+All rights reserved to idarbandi.
+For more details, contact: darbandidr99@gmail.com
+GitHub repository: https://github.com/idarbandi/maktab
+"""
 
-# profiles/comments
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Category, Comment, Notification, Post, Tag, UserProfile
+from .models import (
+    MaktabCategory,
+    MaktabComment,
+    MaktabNotification,
+    MaktabPost,
+    MaktabTag,
+    MaktabUserProfile,
+)
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class MaktabCommentSerializer(serializers.ModelSerializer):
+    """
+    Serializer برای تبدیل مدل کامنت‌ها به داده‌های JSON و بالعکس
+    """
     replies = serializers.SerializerMethodField()
     like_count = serializers.ReadOnlyField()
 
     class Meta:
-        model = Comment
-        fields = '__all__'
+        model = MaktabComment  # مدل مورد استفاده در این Serializer
+        fields = '__all__'  # فیلدهای قابل نمایش و ویرایش
 
     def get_replies(self, obj):
+        """
+        دریافت کامنت‌های پاسخ داده شده به این کامنت
+        """
         if obj.replies.exists():
-            return CommentSerializer(obj.replies.all(), many=True).data
+            return MaktabCommentSerializer(obj.replies.all(), many=True).data
         return []
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class MaktabCategorySerializer(serializers.ModelSerializer):
+    """
+    Serializer برای تبدیل مدل دسته‌بندی‌ها به داده‌های JSON و بالعکس
+    """
     class Meta:
-        model = Category
-        fields = '__all__'
+        model = MaktabCategory  # مدل مورد استفاده در این Serializer
+        fields = '__all__'  # فیلدهای قابل نمایش و ویرایش
 
 
-class TagSerializer(serializers.ModelSerializer):
+class MaktabTagSerializer(serializers.ModelSerializer):
+    """
+    Serializer برای تبدیل مدل تگ‌ها به داده‌های JSON و بالعکس
+    """
     class Meta:
-        model = Tag
-        fields = '__all__'
+        model = MaktabTag  # مدل مورد استفاده در این Serializer
+        fields = '__all__'  # فیلدهای قابل نمایش و ویرایش
 
 
-class PostSerializer(serializers.ModelSerializer):
-    categories = CategorySerializer(many=True, read_only=True)
-    tags = TagSerializer(many=True, read_only=True)
+class MaktabPostSerializer(serializers.ModelSerializer):
+    """
+    Serializer برای تبدیل مدل پست‌ها به داده‌های JSON و بالعکس
+    """
+    categories = MaktabCategorySerializer(many=True, read_only=True)
+    tags = MaktabTagSerializer(many=True, read_only=True)
     like_count = serializers.ReadOnlyField()
 
-
-class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Notification
-        fields = ['id', 'message', 'created_at']
+        model = MaktabPost  # مدل مورد استفاده در این Serializer
+        fields = ['id', 'user', 'title', 'content', 'created_at',
+                  'status', 'categories', 'tags', 'like_count']
 
 
-# profiles/serializers.py
-
-
-class UserSerializer(serializers.ModelSerializer):
+class MaktabNotificationSerializer(serializers.ModelSerializer):
+    """
+    Serializer برای تبدیل مدل نوتیفیکیشن‌ها به داده‌های JSON و بالعکس
+    """
     class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'is_superuser', 'is_staff')
+        model = MaktabNotification  # مدل مورد استفاده در این Serializer
+        fields = ['id', 'message', 'created_at']  # فیلدهای قابل نمایش و ویرایش
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+class MaktabUserSerializer(serializers.ModelSerializer):
+    """
+    Serializer برای تبدیل مدل کاربران به داده‌های JSON و بالعکس
+    """
+    class Meta:
+        model = User  # مدل مورد استفاده در این Serializer
+        fields = ('id', 'username', 'email', 'is_superuser',
+                  'is_staff')  # فیلدهای قابل نمایش و ویرایش
+
+
+class MaktabUserProfileSerializer(serializers.ModelSerializer):
+    """
+    Serializer برای تبدیل مدل پروفایل کاربران به داده‌های JSON و بالعکس
+    """
+    user = MaktabUserSerializer(read_only=True)
 
     class Meta:
-        model = UserProfile
+        model = MaktabUserProfile  # مدل مورد استفاده در این Serializer
+        # فیلدهای قابل نمایش و ویرایش
         fields = ['user', 'bio', 'location', 'profile_picture']

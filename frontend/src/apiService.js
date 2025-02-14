@@ -1,7 +1,13 @@
-// src/apiService.js
+/*
+This file is part of the maktab project.
+All rights reserved to idarbandi.
+For more details, contact: darbandidr99@gmail.com
+GitHub repository: https://github.com/idarbandi/maktab
+*/
+
 import axios from 'axios';
 
-const apiClient = axios.create({
+const maktabApiClient = axios.create({
   baseURL: 'http://127.0.0.1:8000', // Ensure this URL is correct
   withCredentials: false,
   headers: {
@@ -10,7 +16,7 @@ const apiClient = axios.create({
   },
 });
 
-apiClient.interceptors.request.use(
+maktabApiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -25,21 +31,36 @@ apiClient.interceptors.request.use(
   }
 );
 
-const apiService = {
+const maktabApiService = {
   post(url, data) {
-    return apiClient.post(url, data);
+    return maktabApiClient.post(url, data);
   },
   get(url) {
-    return apiClient.get(url);
+    return maktabApiClient.get(url);
   },
-  getPosts(page = 1) {
-    console.log('Fetching posts for page:', page); // Add debugging log
-    return apiClient.get(`/api/posts/?page=${page}`);
+  getMaktabPosts(page = 1) {
+    console.log('Fetching maktab posts for page:', page); // Add debugging log
+    return maktabApiClient.get(`/api/posts/?page=${page}`);
   },
-  getUser() {
-    return apiClient.get('/dj-rest-auth/user/'); // Endpoint to fetch user information
+  getMaktabMainPagePosts(page = 1) {
+    console.log('Fetching maktab main page posts for page:', page); // Add debugging log
+    return maktabApiClient.get(`/api/posts/?page=${page}`); // Ensure this matches your API endpoint
+  },
+  getMaktabUserPosts(userId, page = 1) {
+    console.log(`Fetching maktab posts for user ${userId} on page ${page}`); // Add debugging log
+    return maktabApiClient.get(`/api/posts/?user=${userId}&page=${page}`);
+  },
+  getMaktabCategoriesAndTags() {
+    return maktabApiClient.get('/api/categories/'); // Ensure this matches your API endpoint
+  },
+  getMaktabFilteredPosts(params) {
+    console.log('Fetching filtered maktab posts', params); // Add debugging log
+    return maktabApiClient.get('/api/posts/filter/', { params });
+  },
+  getMaktabUser() {
+    return maktabApiClient.get('/dj-rest-auth/user/'); // Endpoint to fetch user information
   },
 };
 
-export { apiClient };
-export default apiService;
+export { maktabApiClient };
+export default maktabApiService;

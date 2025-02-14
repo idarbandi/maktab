@@ -1,23 +1,30 @@
-// store/notifications.js
+/*
+This file is part of the maktab project.
+All rights reserved to idarbandi.
+For more details, contact: darbandidr99@gmail.com
+GitHub repository: https://github.com/idarbandi/maktab
+*/
+
 import axios from 'axios';
 
 const state = {
-  notifications: [],
+  maktabNotifications: [], // تغییر نام به شکل اختصاصی
 };
 
 const getters = {
-  allNotifications: (state) => state.notifications,
+  allMaktabNotifications: (state) => state.maktabNotifications, // تغییر نام به شکل اختصاصی
 };
 
 const actions = {
-  async fetchNotifications({ commit }) {
+  async fetchMaktabNotifications({ commit }) {
+    // دریافت اطلاعیه‌ها از API
     const response = await axios.get('http://127.0.0.1:8000/profile/notifications/');
-    commit('setNotifications', response.data);
+    commit('setMaktabNotifications', response.data);
   },
 };
 
 const mutations = {
-  setNotifications: (state, notifications) => (state.notifications = notifications),
+  setMaktabNotifications: (state, notifications) => (state.maktabNotifications = notifications), // تغییر نام به شکل اختصاصی
 };
 
 export default {

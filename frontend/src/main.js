@@ -10,7 +10,7 @@ createApp(App)
   .use(router)
   .use(VueGtag, {
     property: {
-      id: process.env.VUE_APP_GOOGLE_ANALYTICS_ID, // Accessing the environment variable
+      id: process.env.VUE_APP_GOOGLE_ANALYTICS_ID, // Replace with your Google Analytics Measurement ID
     },
   })
   .mount('#app');

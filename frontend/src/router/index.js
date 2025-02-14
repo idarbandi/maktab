@@ -1,9 +1,15 @@
-// router/index.js
+/*
+This file is part of the maktab project.
+All rights reserved to idarbandi.
+For more details, contact: darbandidr99@gmail.com
+GitHub repository: https://github.com/idarbandi/maktab
+*/
+
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '@/components/HomePage.vue';
 import LoginForm from '@/LoginForm.vue';
 import RegisterForm from '@/RegisterForm.vue';
-import dashboardPage from '@/components/dashboardPage.vue';
+import MaktabDashboardPage from '@/components/dashboardPage.vue';
 import store from '@/store'; // Import the store
 import PasswordReset from '@/components/PasswordReset.vue';
 
@@ -43,7 +49,7 @@ const routes = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: dashboardPage,
+    component: MaktabDashboardPage,
     beforeEnter: (to, from, next) => {
       if (store.getters.isAuthenticated) {
         next();

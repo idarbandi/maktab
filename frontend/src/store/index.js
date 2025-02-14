@@ -1,4 +1,3 @@
-// store/index.js
 import { createStore } from 'vuex';
 import apiService, { apiClient } from '@/apiService';
 
@@ -33,13 +32,13 @@ const store = createStore({
     async login({ commit }, user) {
       commit('auth_request');
       try {
-        const response = await apiService.post('/dj-rest-auth/login/', {
+        const response = await apiService.post(process.env.VUE_APP_API_AUTH_LOGIN, {
           email: user.email,
           password: user.password,
         });
 
         const token = response.data.key;
-        const userInfo = response.data.user; // Ensure this includes is_superuser or is_staff
+        const userInfo = response.data.user;
 
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(userInfo));
@@ -49,7 +48,30 @@ const store = createStore({
       } catch (error) {
         commit('auth_error');
         localStorage.removeItem('token');
-        console.error('Login error:', error);
+        throw error;
+      }
+    },
+    async register({ commit }, user) {
+      commit('auth_request');
+      try {
+        const response = await apiService.post(process.env.VUE_APP_API_AUTH_REGISTRATION, {
+          email: user.email,
+          username: user.username,
+          password1: user.password1,
+          password2: user.password2,
+        });
+
+        const token = response.data.key;
+        const userInfo = response.data.user;
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userInfo));
+        apiClient.defaults.headers.common['Authorization'] = `Token ${token}`;
+
+        commit('auth_success', { token, user: userInfo });
+      } catch (error) {
+        commit('auth_error');
+        localStorage.removeItem('token');
         throw error;
       }
     },

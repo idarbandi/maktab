@@ -1,3 +1,10 @@
+<!--
+This file is part of the maktab project.
+All rights reserved to idarbandi.
+For more details, contact: darbandidr99@gmail.com
+GitHub repository: https://github.com/idarbandi/maktab
+-->
+
 <template>
   <div id="about-page">
     <header>
@@ -15,6 +22,7 @@
 <script>
 export default {
   name: 'AboutPage',
+  // صفحه درباره ما که شامل اطلاعاتی درباره پروژه مکتب است
 };
 </script>
 
@@ -24,25 +32,30 @@ export default {
   font-family: 'Tahoma', sans-serif;
   direction: rtl;
   padding: 20px;
+  /* استایل‌دهی به صفحه درباره ما */
 }
 
 header {
   background-color: #42b983;
   color: white;
   padding: 20px;
+  /* استایل‌دهی به هدر */
 }
 
 header h1 {
   margin: 0;
+  /* حذف حاشیه از تگ h1 */
 }
 
 main {
   margin-top: 20px;
   font-size: 18px;
+  /* استایل‌دهی به بخش اصلی محتوا */
 }
 
 footer {
   margin-top: 40px;
   color: #555;
+  /* استایل‌دهی به فوتر */
 }
 </style>
